@@ -65,7 +65,7 @@ class Deck
 end
 
 class BlackjackGame
-  attr_accessor :deck
+  attr_accessor :game_deck
   attr_accessor :player_hand_array
   attr_accessor :player_total
   attr_accessor :money
@@ -74,8 +74,8 @@ class BlackjackGame
   attr_accessor :array_to_string
 
     def initialize
-      @deck = Deck.new
-      @deck.shuffle
+      @game_deck = Deck.new
+      @game_deck.shuffle
     end
   
     def start_game
@@ -84,17 +84,10 @@ class BlackjackGame
     end
 
     def round
-      @bet = 10
       player_hand
-      # @player_hand_array = []
-      # 2.times {player_hand_array << self.deal_card}
       player_total
-      # player_message
-      puts "You have $#{@money} and you bet $#{@bet}"
-      puts "You have #{self.player_hand_array[0].rank} and #{self.player_hand_array[1].rank}, your total is #{@total}"
-      
+      player_message
       hand_test
-
       dealer
     end
 
@@ -103,12 +96,9 @@ class BlackjackGame
       answer = gets.chomp.downcase
       if answer == 'h' then
         player_hand_array << self.deal_card
-        # @total += self.player_hand_array[2].rank_value
-        
         player_total
         player_message
         hand_test
-        # hit
       elsif answer == 's' then
         stand
       end
@@ -116,8 +106,11 @@ class BlackjackGame
 
     def stand
      puts "Your score is #{@total}!"
+     dealer
+     winner
      new_game 
     end
+
     def new_game
        print 'Do you want to play again (y)es or (n)o?'
          answer = gets.chomp.downcase
@@ -127,23 +120,33 @@ class BlackjackGame
           puts 'Thanks for Playing'
          end
     end
+    def winner
+      if @total <= 21 && @total >@total_dealer then
+        puts "Winner, Winner, Chicken Dinner!"
+      else
+        puts "You Lose!"
+      end
+    end
     def player_total 
       @total = 0
       @player_hand_array.each  do |card|
         @total += card.rank_value
       end
     end
+
     def player_array_to_string
-        string = ''
-        @array_to_string = string
-        @player_hand_array.each do |rank|
-          @array_to_string += rank.rank.to_s.center(2.5)
+        @array_to_string = []
+       
+        @player_hand_array.map do |rank|
+          array_to_string << rank.rank
         end
     end
+
     def player_message
     player_array_to_string
-    puts "You have #{@array_to_string}your total is #{@total}"
+    puts "Your hand is #{@array_to_string}! Your total is #{@total}"
     end
+
     def dealer_total
       @total_dealer = 0
       @dealer_hand.each do |card|
@@ -165,21 +168,19 @@ class BlackjackGame
     def player_hand
       @player_hand_array = []
       2.times {player_hand_array << self.deal_card}
-      # player_message
-      # player_total
-      # puts "You have $#{@money} and you bet $#{@bet}"
-      # puts "You have #{self.player_hand_array[0].rank} and #{self.player_hand_array[1].rank}, your total is #{@total}"
     end
+
     def dealer
       @dealer_hand = []
       2.times {dealer_hand << self.deal_card}
       dealer_total
       puts "Dealer has #{self.dealer_hand[0].rank} and #{self.dealer_hand[1].rank}, your total is #{@total_dealer}"
+    end
 
-    end
     def deal_card
-      card = @deck.draw
+      @game_deck.draw
     end
+
   end
 # create deck on inititalize
 # shuffle deck
