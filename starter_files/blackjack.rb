@@ -69,9 +69,11 @@ class BlackjackGame
   attr_accessor :player_hand_array
   attr_accessor :player_total
   attr_accessor :money
-  attr_accessor :dealer_hand
   attr_accessor :dealer_total
   attr_accessor :array_to_string
+  attr_accessor :rank_array
+  attr_accessor :non_ace_total
+  attr_accessor :num_aces
 
     def initialize
       @game_deck = Deck.new
@@ -88,7 +90,7 @@ class BlackjackGame
       player_total
       player_message
       hand_test
-      dealer
+      # dealer
     end
 
     def hit 
@@ -120,6 +122,7 @@ class BlackjackGame
           puts 'Thanks for Playing'
          end
     end
+
     def winner
       if @total <= 21 && @total >@total_dealer then
         puts "Winner, Winner, Chicken Dinner!"
@@ -127,12 +130,37 @@ class BlackjackGame
         puts "You Lose!"
       end
     end
-    def player_total 
+    def player_total
+      player_rank_array
       @total = 0
       @player_hand_array.each  do |card|
+      if card.rank_value != 1 then
         @total += card.rank_value
       end
+      end
+      if  @total <= 10 && rank_array.include?(:A) then
+      @num_aces = rank_array.count(:A)
+      @total += 11 + @num_aces -1
+      elsif @total >= 10 && rank_array.include?(:A) then
+      @total +=1
+      end
     end
+    #  def player_total
+    #   player_rank_array
+    #   @non_ace_total = 0
+    #   @total = 0
+    #   @player_hand_array.each  do |card|
+    #     if card.rank_value != 1 then
+    #       non_ace_total += card.rank_value
+    #     end
+    #   end
+    #   if  @non_ace_total <= 10 && rank_array.include?(:A) then
+    #   @num_aces = rank_array.count(:A)
+    #   @total += 11 + @num_aces - 1
+    #   elsif @non_ace_total >= 10 && rank_array.include?(:A) then
+    #   @total += 1
+    #   end
+    # end
 
     def player_array_to_string
         @array_to_string = []
@@ -165,6 +193,7 @@ class BlackjackGame
         hit
       end
     end
+
     def player_hand
       @player_hand_array = []
       2.times {player_hand_array << self.deal_card}
@@ -181,7 +210,13 @@ class BlackjackGame
       @game_deck.draw
     end
 
-  end
+    def player_rank_array
+      @rank_array = []
+      @player_hand_array.each do |rank|
+      @rank_array << rank.rank
+      end
+    end
+end
 # create deck on inititalize
 # shuffle deck
 # start game with greeting
