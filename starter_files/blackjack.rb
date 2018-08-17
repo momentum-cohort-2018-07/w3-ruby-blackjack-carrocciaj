@@ -1,5 +1,3 @@
-tputs "TODO Implement the game of blackjack."
-
 # Hint: for starters, read bin/blackjack.rb
 class Card
   attr_accessor :rank
@@ -69,7 +67,7 @@ class BlackjackGame
   attr_accessor :player_hand_array
   attr_accessor :player_total
   attr_accessor :money
-  attr_accessor :dealer_total
+  attr_accessor :dealer_hand
   attr_accessor :array_to_string
   attr_accessor :rank_array
   attr_accessor :non_ace_total
@@ -133,9 +131,12 @@ class BlackjackGame
     def player_total
       player_rank_array
       @total = 0
+      @non_ace_total = 0
       @player_hand_array.each  do |card|
-      if card.rank_value != 1 then
+      if card.rank_value != 1 && rank_array.include?(:A) == false then
         @total += card.rank_value
+        elsif card.rank_value != 1 && rank_array.include?(:A) then
+        @non_ace_total += card.rank_value
       end
       end
       if  @total <= 10 && rank_array.include?(:A) then
