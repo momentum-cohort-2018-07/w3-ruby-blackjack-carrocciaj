@@ -1,4 +1,3 @@
-# Hint: for starters, read bin/blackjack.rb
 class Card
   attr_accessor :rank
   attr_accessor :suit
@@ -142,10 +141,13 @@ class BlackjackGame
       if  @total <= 10 && rank_array.include?(:A) then
       @num_aces = rank_array.count(:A)
       @total += 11 + @num_aces -1
-      elsif @total >= 10 && rank_array.include?(:A) then
+      elsif @total > 10 && rank_array.include?(:A) then
       @total +=1
       end
     end
+
+    def inspect
+      end
     #  def player_total
     #   player_rank_array
     #   @non_ace_total = 0
@@ -218,21 +220,7 @@ class BlackjackGame
       end
     end
 end
-# create deck on inititalize
-# shuffle deck
-# start game with greeting
-# deal hand to player
-# return cards and total
-# ask to hit or stand
-# if hit deal one card else submit total
-# if total greater then 21, bust and got to new hand
-# else show final total
-# deal hand to dealer
-# determine if dealer needs to hit or stand
-# return total or bust comment
-# if dealer total > player total
-# return you lose comment
-# else return you win 
-# add or subtract bet to money total
-# deal new hand
 
+game = BlackjackGame.new
+game.start_game
+game.round
