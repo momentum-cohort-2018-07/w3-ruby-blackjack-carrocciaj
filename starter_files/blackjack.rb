@@ -75,19 +75,27 @@ class BlackjackGame
     def initialize
       @game_deck = Deck.new
       @game_deck.shuffle
+      start_game
     end
-  
+    def inspect
+    end
     def start_game
-      @money = 100
-      puts "Welcome to Josh's Blackjack Table, here is $#{@money} to get you started!"
+      puts "Welcome to Josh's Blackjack Table, here is $#{@money} to get you started!\n\n"
+      print "Are you ready to play? (y)es or (n)o?"
+      answer = gets.chomp.downcase
+      if answer == 'y' then
+        round 
+      elsif answer == 'n' then
+       puts "Come Back Again!"
+      end
     end
 
     def round
       player_hand
+      dealer
       player_total
       player_message
       hand_test
-      # dealer
     end
 
     def hit 
@@ -105,7 +113,7 @@ class BlackjackGame
 
     def stand
      puts "Your score is #{@total}!"
-     dealer
+     dealer_message
      winner
      new_game 
     end
@@ -127,55 +135,39 @@ class BlackjackGame
         puts "You Lose!"
       end
     end
+
     def player_total
       player_rank_array
       @total = 0
       @non_ace_total = 0
       @player_hand_array.each  do |card|
-      if card.rank_value != 1 && rank_array.include?(:A) == false then
-        @total += card.rank_value
+        if card.rank_value != 1 && rank_array.include?(:A) == false then
+          @total += card.rank_value
         elsif card.rank_value != 1 && rank_array.include?(:A) then
-        @non_ace_total += card.rank_value
+          @non_ace_total += card.rank_value
+        end
       end
-      end
-      if  @total <= 10 && rank_array.include?(:A) then
-      @num_aces = rank_array.count(:A)
-      @total += 11 + @num_aces -1
-      elsif @total > 10 && rank_array.include?(:A) then
-      @total +=1
-      end
+        if @non_ace_total <= 10  && rank_array.include?(:A) then
+          @num_aces = rank_array.count(:A)
+          @total += 11 + @num_aces -1 + @non_ace_total
+        elsif @total > 10  && rank_array.include?(:A) then
+          @total +=1
+        end
     end
-
-    def inspect
-      end
-    #  def player_total
-    #   player_rank_array
-    #   @non_ace_total = 0
-    #   @total = 0
-    #   @player_hand_array.each  do |card|
-    #     if card.rank_value != 1 then
-    #       non_ace_total += card.rank_value
-    #     end
-    #   end
-    #   if  @non_ace_total <= 10 && rank_array.include?(:A) then
-    #   @num_aces = rank_array.count(:A)
-    #   @total += 11 + @num_aces - 1
-    #   elsif @non_ace_total >= 10 && rank_array.include?(:A) then
-    #   @total += 1
-    #   end
-    # end
 
     def player_array_to_string
         @array_to_string = []
-       
         @player_hand_array.map do |rank|
           array_to_string << rank.rank
         end
     end
 
     def player_message
-    player_array_to_string
-    puts "Your hand is #{@array_to_string}! Your total is #{@total}"
+      player_array_to_string
+      puts "Your hand is #{@array_to_string}! Your total is #{@total}\n\n"
+      puts "#{@non_ace_total}"
+      puts "#{@total}"
+      show_dealer_card
     end
 
     def dealer_total
@@ -183,6 +175,7 @@ class BlackjackGame
       @dealer_hand.each do |card|
         @total_dealer += card.rank_value
       end
+      dealer_hit_or_stay
     end
 
     def hand_test
@@ -201,16 +194,35 @@ class BlackjackGame
       @player_hand_array = []
       2.times {player_hand_array << self.deal_card}
     end
+    
+    def show_dealer_card
+      puts "Dealer shows #{self.dealer_hand[0].rank} of #{self.dealer_hand[0].suit}." 
+      puts "#{@dealer_hand}"
+    end
 
     def dealer
       @dealer_hand = []
       2.times {dealer_hand << self.deal_card}
+    end
+    
+    def dealer_message
       dealer_total
-      puts "Dealer has #{self.dealer_hand[0].rank} and #{self.dealer_hand[1].rank}, your total is #{@total_dealer}"
+      if @total_dealer <= 21 then
+        puts "Dealer's total is #{@total_dealer}"
+      else
+        puts "Dealer Busted!"
+      end
     end
 
     def deal_card
       @game_deck.draw
+    end
+    
+    def dealer_hit_or_stay
+      if @total_dealer < 16 then
+        dealer_hand << self.deal_card
+        dealer_total
+      end
     end
 
     def player_rank_array
@@ -220,7 +232,3 @@ class BlackjackGame
       end
     end
 end
-
-game = BlackjackGame.new
-game.start_game
-game.round
