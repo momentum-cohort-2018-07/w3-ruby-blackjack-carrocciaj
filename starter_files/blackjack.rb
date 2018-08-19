@@ -76,9 +76,8 @@ class BlackjackGame
   attr_accessor :win_count
 
     def initialize
-      @game_deck = Deck.new
-      @game_deck.shuffle
-      @wallet = 100
+      # @game_deck = Deck.new
+      # @game_deck.shuffle
       start_game
     end
     def inspect
@@ -94,7 +93,10 @@ class BlackjackGame
     #   end
     # end
     def start_game
+      @game_deck = Deck.new
+      @game_deck.shuffle
       @money = 100
+      # @bet = 10
       puts "Welcome to Josh's Blackjack Table, here is $#{@money} to get you started!\n\n"
       print "Are you ready to play? (y)es or (n)o? "
       answer = gets.chomp.downcase
@@ -123,24 +125,41 @@ class BlackjackGame
     # end
 
     def bet
-     @bet = 10
+     @bet = 100
     end
 
-    def wallet_balance
-      # wallet
-      bet
-      if @win_count == 1 then
-        @money += @bet
-      elsif @win_count == -1 then
-        @money -= @bet
-      elsif @win_count ==0 then
-        @money += 0
-      end
-      balance_message
-    end
+    # def wallet_balance
+    #   # wallet
+    #   bet
+    #   if @win_count == 1 then
+    #     @money += @bet
+    #   elsif @win_count == -1 then
+    #     @money -= @bet
+    #   elsif @win_count ==0 then
+    #     @money += 0
+    #   end
+    #   balance_message
+    # end
 
     def balance_message
-      puts "You have $#{@money} left"
+      bet
+      if @money >= @bet then
+        puts "You have $#{@money} left"
+        new_game
+      else
+        no_money_message
+      end
+    end
+
+    def no_money_message
+      puts "You lost all your money Chump! Taking you back to start"
+      print "Do you want to lose more money? (y)es or (n)o "
+      answer = gets.chomp
+      if answer == 'y' then
+        start_game
+      else 
+        puts 'Thanks for the money!$!'
+      end
     end
 
     def player_hand
@@ -167,8 +186,8 @@ class BlackjackGame
         if @non_ace_total <= 10  && rank_array.include?(:A) then
           @num_aces = rank_array.count(:A)
           @total += 11 + @num_aces -1 + @non_ace_total
-        elsif @total > 10  && rank_array.include?(:A) then
-          @total +=1
+        elsif @non_ace_total > 10  && rank_array.include?(:A) then
+          @total += 1 +@non_ace_total + @num_aces -1
         end
     end
 
@@ -193,12 +212,14 @@ class BlackjackGame
     end
 
     def hand_test
-      if @total == 21 then
-        puts "Blackjack! you win!\n\n"
-        new_game
-      elsif @total >= 21 then
+      bet
+      # if @total == 21 then
+      #   puts "Blackjack! you win!\n\n"
+      #   new_game
+      if @total > 21 then
         puts "Bust, you lose!\n\n"
-        new_game
+        @money -= @bet
+        balance_message
       else
         hit
       end
@@ -221,11 +242,11 @@ class BlackjackGame
      puts "Your score is #{@total}!\n\n"
      dealer_message
      winner
-     new_game 
+     balance_message
     end
 
     def new_game
-      wallet_balance
+      # balance_message
        print 'Do you want to play again (y)es or (n)o? '
          answer = gets.chomp.downcase
          if answer == 'y' then
@@ -245,17 +266,18 @@ class BlackjackGame
     end
 
     def winner
-      @win_count = 0
+     bet
       if @total <= 21 && @total >@total_dealer || @total_dealer > 21 then
         puts "Winner, Winner, Chicken Dinner!\n\n"
-        @win_count = 1
+        @money += @bet
       elsif @total <= 21 && @total_dealer <= 21 && @total<@total_dealer
         puts "You Lose!\n\n"
-        @win_count = -1
+        @money -= @bet
       elsif @total == @total_dealer then
         puts "Draw! Split Pot\n\n"
-        @win_count = 0
+        @money += 0
       end
+      
     end
 
     def dealer_rank_array
@@ -287,7 +309,7 @@ class BlackjackGame
 
     
     def dealer_hit_or_stay
-      if @total_dealer < 16 && @total_dealer < @total then
+      if @total_dealer < 16 && @total_dealer <= @total then
         dealer_hand << self.deal_card
         dealer_total
       end
