@@ -96,7 +96,7 @@ class BlackjackGame
     def start_game
       @money = 100
       puts "Welcome to Josh's Blackjack Table, here is $#{@money} to get you started!\n\n"
-      print "Are you ready to play? (y)es or (n)o?"
+      print "Are you ready to play? (y)es or (n)o? "
       answer = gets.chomp.downcase
       if answer == 'y' then
         round 
@@ -194,10 +194,10 @@ class BlackjackGame
 
     def hand_test
       if @total == 21 then
-        puts "Blackjack! you win!"
+        puts "Blackjack! you win!\n\n"
         new_game
       elsif @total >= 21 then
-        puts "Bust, you lose!"
+        puts "Bust, you lose!\n\n"
         new_game
       else
         hit
@@ -205,7 +205,7 @@ class BlackjackGame
     end
 
     def hit 
-      print 'Do you want to (h)it or (s)tand?'
+      print 'Do you want to (h)it or (s)tand? '
       answer = gets.chomp.downcase
       if answer == 'h' then
         player_hand_array << self.deal_card
@@ -218,7 +218,7 @@ class BlackjackGame
     end
 
     def stand
-     puts "Your score is #{@total}!"
+     puts "Your score is #{@total}!\n\n"
      dealer_message
      winner
      new_game 
@@ -226,25 +226,34 @@ class BlackjackGame
 
     def new_game
       wallet_balance
-       print 'Do you want to play again (y)es or (n)o?'
+       print 'Do you want to play again (y)es or (n)o? '
          answer = gets.chomp.downcase
          if answer == 'y' then
           self.round
-         else
+         elsif answer == 'n' then
           puts 'Thanks for Playing'
-         end
+         else 
+          puts "Invalid Input"
+          print 'Do you want to play again (y)es or (n)o? '
+          answer = gets.chomp.downcase
+            if answer == 'y' then
+              self.round
+            elsif answer == 'n' then
+              puts 'Thanks for Playing'
+            end
+        end
     end
 
     def winner
       @win_count = 0
       if @total <= 21 && @total >@total_dealer || @total_dealer > 21 then
-        puts "Winner, Winner, Chicken Dinner!"
+        puts "Winner, Winner, Chicken Dinner!\n\n"
         @win_count = 1
       elsif @total <= 21 && @total_dealer <= 21 && @total<@total_dealer
-        puts "You Lose!"
+        puts "You Lose!\n\n"
         @win_count = -1
       elsif @total == @total_dealer then
-        puts "Draw! Split Pot"
+        puts "Draw! Split Pot\n\n"
         @win_count = 0
       end
     end
@@ -278,23 +287,23 @@ class BlackjackGame
 
     
     def dealer_hit_or_stay
-      if @total_dealer < 16 then
+      if @total_dealer < 16 && @total_dealer < @total then
         dealer_hand << self.deal_card
         dealer_total
       end
     end
     
     def show_dealer_card
-      puts "Dealer shows #{self.dealer_hand[0].rank} of #{self.dealer_hand[0].suit.capitalize}." 
-      puts "#{self.dealer_hand.to_s}"
+      puts "Dealer shows #{self.dealer_hand[0].rank} of #{self.dealer_hand[0].suit.capitalize}.\n\n" 
+      # puts "#{self.dealer_hand.to_s}"
     end
     
     def dealer_message
       dealer_total
       if @total_dealer <= 21 then
-        puts "Dealer's total is #{@total_dealer}"
+        puts "Dealer's total is #{@total_dealer}\n\n"
       else
-        puts "Dealer Busted!"
+        puts "Dealer Busted!\n\n"
       end
     end
 end
